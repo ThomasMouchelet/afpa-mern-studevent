@@ -23,3 +23,14 @@ git commit -m <message>
 - POST /events -> create event
 - DELETE /events/:id -> delete event by id
 - PUT /events/:id -> update event by id
+
+
+Create model user
+    firstName
+    lastName
+    email
+    password
+
+Create route for users
+Create controller for users
+    getAllUsers, getOneUser, ...
