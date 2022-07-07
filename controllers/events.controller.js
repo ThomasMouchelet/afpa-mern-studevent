@@ -1,55 +1,46 @@
-const eventList = [
-    {
-        id: 1,
-        name: 'Event 1',
-        date: '2020-01-01',
-    },
-    {
-        id: 2,
-        name: 'Event 2',
-        date: '2020-01-02',
-    }
-]
+const Event = require('../models/event.model');
 
 const EventsController = {
-    getAllEvents: (req, res) => {
-        res.send(eventList)
-    },
-    getOneEventById: (req, res) => {
-        const event = eventList.find(event => event.id === parseInt(req.params.id))
-        if (!event) {
-            res.status(404).send({ message: 'Event not found' })
+    getAllEvents: async (req, res) => {
+        try {
+            const eventList = await Event.find()
+            res.send(eventList)
+        } catch (error) {
+            res.status(500).send({ message: error.message })
         }
-        res.send(event)
     },
-    deleteEventById: (req, res) => {
-        const event = eventList.find(event => event.id === parseInt(req.params.id))
-        if (!event) {
-            res.status(404).send({ message: 'Event not found' })
+    getOneEventById: async (req, res) => {
+        try {
+            const event = await Event.findById(req.params.id)
+            res.send(event)
+        } catch (error) {
+            res.status(500).send({ message: error.message })
         }
-        const index = eventList.indexOf(event)
-        eventList.splice(index, 1)
-        res.status(200).send(event)
     },
-    updateEventById: (req, res) => {
-        const event = eventList.find(event => event.id === parseInt(req.params.id))
-        if (!event) {
-            res.status(404).send({ message: 'Event not found' })
+    deleteEventById: async (req, res) => {
+        try {
+            const event = await Event.findByIdAndDelete(req.params.id)
+            res.send(event)
+        } catch (error) {
+            res.status(500).send({ message: error.message })
         }
-
-        if (req.body.name) event.name = req.body.name
-        if (req.body.date) event.date = req.body.date
-
-        res.send(event)
     },
-    createEvent: (req, res) => {
-        const event = {
-            id: eventList.length + 1,
-            name: req.body.name,
-            date: req.body.date,
+    updateEventById: async (req, res) => {
+        try {
+            const event = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true })
+            res.send(event)
+        } catch (error) {
+            res.status(500).send({ message: error.message })
         }
-        eventList.push(event)
-        res.status(200).send(event)
+    },
+    createEvent: async (req, res) => {
+        try {
+            const event = new Event(req.body)
+            await event.save()
+            res.send(event)
+        } catch (error) {
+            res.status(500).send({ message: error.message })
+        }
     }
 }
 
